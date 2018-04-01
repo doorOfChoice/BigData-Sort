@@ -1,0 +1,51 @@
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
+
+public class FormatPrintWriter {
+    private List<String> numbers = new ArrayList<>();
+    private PrintWriter p;
+    private int count = 1;
+    private int threshold;
+
+    public FormatPrintWriter(PrintWriter p) {
+        this(p, 3);
+    }
+
+    public FormatPrintWriter(PrintWriter p, int threshold) {
+        this.p = p;
+        this.threshold = threshold;
+    }
+
+    public void write(int n) {
+        numbers.add(String.valueOf(n));
+        count++;
+    }
+
+    public void write(String s) {
+        numbers.add(s);
+        count++;
+    }
+
+    private void flush() {
+        if (!numbers.isEmpty()) {
+            StringBuilder bud = new StringBuilder();
+            for (int j = 0, i = count - numbers.size(); j < numbers.size(); j++, i++) {
+                if ((i - 1) % threshold == 0 && i != 1) {
+                    bud.append("\n");
+                }
+                if (threshold != 1 && i % threshold != 1) {
+                    bud.append("\t");
+                }
+                bud.append(numbers.get(j));
+            }
+            p.flush();
+            numbers.clear();
+        }
+    }
+
+    public void close() {
+        flush();
+        p.close();
+    }
+}
