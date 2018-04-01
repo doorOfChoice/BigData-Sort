@@ -34,7 +34,7 @@ public class Generator {
     /**
      * 生成随机的数字文件
      *
-     * @throws FileNotFoundException
+     * @throws FileNotFoundException 文件不存在
      */
     public void generate() throws FileNotFoundException {
         File f = new File(path);
@@ -89,7 +89,7 @@ public class Generator {
      * @throws FileNotFoundException
      */
     public void write(List<Integer> numbers, String fname) throws FileNotFoundException {
-        FormatPrintWriter writer = new FormatPrintWriter(new PrintWriter(fname), per);
+        FormatPrintWriter writer = FormatPrintWriter.wrap(new PrintWriter(fname), per);
         for (Integer number : numbers) {
             writer.write(number);
         }
@@ -117,7 +117,7 @@ public class Generator {
     public FormatScanner getScanner(String fname) throws FileNotFoundException {
         Scanner scan = new Scanner(new File(fname));
         scan.useDelimiter("[\t|\n]");
-        return new FormatScanner(scan);
+        return FormatScanner.wrap(scan);
     }
 
 

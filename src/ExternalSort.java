@@ -3,7 +3,6 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Queue;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -26,6 +25,7 @@ public class ExternalSort {
 
     /**
      * 开始进行外部排序
+     *
      * @throws Exception
      */
     public void start() throws Exception {
@@ -115,6 +115,7 @@ public class ExternalSort {
 
     /**
      * 对两个文件进行外部排序
+     *
      * @param f1
      * @param f2
      * @param target
@@ -124,7 +125,7 @@ public class ExternalSort {
     private int externalSort2(String f1, String f2, int target) throws FileNotFoundException {
         FormatScanner scan1 = g.getScanner(f1);
         FormatScanner scan2 = g.getScanner(f2);
-        FormatPrintWriter p = new FormatPrintWriter(new PrintWriter(new File(getFileName(target))), g.getPer());
+        FormatPrintWriter p = FormatPrintWriter.wrap(new PrintWriter(new File(getFileName(target))), g.getPer());
         while (scan1.hasNext() && scan2.hasNext()) {
             if (scan1.peek() < scan2.peek()) {
                 p.write(scan1.take());
@@ -144,6 +145,7 @@ public class ExternalSort {
 
     /**
      * 对一个文件进行外部排序
+     *
      * @param f1
      * @param target
      * @return
@@ -151,7 +153,7 @@ public class ExternalSort {
      */
     private int externalSort1(String f1, int target) throws FileNotFoundException {
         FormatScanner scan1 = g.getScanner(f1);
-        FormatPrintWriter p = new FormatPrintWriter(new PrintWriter(new File(getFileName(target))), g.getPer());
+        FormatPrintWriter p = FormatPrintWriter.wrap(new PrintWriter(new File(getFileName(target))), g.getPer());
         while (scan1.hasNext()) {
             p.write(scan1.take());
         }

@@ -15,11 +15,11 @@ public class FormatPrintWriter {
 
     private int threshold;
 
-    public FormatPrintWriter(PrintWriter p) {
+    private FormatPrintWriter(PrintWriter p) {
         this(p, 3);
     }
 
-    public FormatPrintWriter(PrintWriter p, int threshold) {
+    private FormatPrintWriter(PrintWriter p, int threshold) {
         this.p = p;
         this.threshold = threshold;
     }
@@ -55,5 +55,13 @@ public class FormatPrintWriter {
     public void close() {
         flush();
         p.close();
+    }
+
+    public static FormatPrintWriter wrap(PrintWriter p, int threshold) {
+        return new FormatPrintWriter(p, threshold);
+    }
+
+    public static FormatPrintWriter wrap(PrintWriter p) {
+        return new FormatPrintWriter(p);
     }
 }

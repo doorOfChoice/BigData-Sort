@@ -6,7 +6,7 @@ public class FormatScanner {
     private int currentValue;
     private boolean isEnd = false;
 
-    public FormatScanner(Scanner scan) {
+    private FormatScanner(Scanner scan) {
         this.scan = scan;
     }
 
@@ -45,5 +45,9 @@ public class FormatScanner {
             return false;
         }
         return true;
+    }
+
+    public static FormatScanner wrap(Scanner scan) {
+        return new FormatScanner(scan);
     }
 }
