@@ -2,10 +2,17 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 格式化PrintWriter
+ * 讲所有的数字按照指定的阈值进行换行
+ */
 public class FormatPrintWriter {
     private List<String> numbers = new ArrayList<>();
+
     private PrintWriter p;
+
     private int count = 1;
+
     private int threshold;
 
     public FormatPrintWriter(PrintWriter p) {
@@ -40,6 +47,7 @@ public class FormatPrintWriter {
                 bud.append(numbers.get(j));
             }
             p.flush();
+            p.print(bud.toString());
             numbers.clear();
         }
     }

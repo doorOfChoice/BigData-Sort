@@ -7,8 +7,18 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class Generator {
+    /**
+     * 生成的随机文件的地址
+     * 可以是多级目录
+     */
     private final String path;
+    /**
+     * 每个文件里面数字数量
+     */
     private int per;
+    /**
+     * 文件的数量
+     */
     private int count;
 
     public Generator(String path, int per, int count) {
@@ -38,7 +48,6 @@ public class Generator {
                 numbers.add(rd.nextInt(10000));
             }
             writeByIndex(numbers, j);
-            System.out.println(numbers);
         }
     }
 
@@ -87,35 +96,40 @@ public class Generator {
         writer.close();
     }
 
+    /**
+     * 根据索引获取Scanner
+     *
+     * @param i
+     * @return
+     * @throws FileNotFoundException
+     */
     public FormatScanner getScannerByIndex(int i) throws FileNotFoundException {
         return getScanner(getFileName(i));
     }
 
+    /**
+     * 获取以换行符和制表符为分割的Scanner
+     *
+     * @param fname
+     * @return
+     * @throws FileNotFoundException
+     */
     public FormatScanner getScanner(String fname) throws FileNotFoundException {
         Scanner scan = new Scanner(new File(fname));
-        scan.useDelimiter("\t");
+        scan.useDelimiter("[\t|\n]");
         return new FormatScanner(scan);
     }
 
-    public String getPath() {
-        return path;
-    }
 
     public int getPer() {
         return per;
     }
 
-    public void setPer(int per) {
-        this.per = per;
-    }
 
     public int getCount() {
         return count;
     }
 
-    public void setCount(int count) {
-        this.count = count;
-    }
 
     public String getFileName(int i) {
         return path + i + ".txt";

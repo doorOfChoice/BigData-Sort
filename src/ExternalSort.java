@@ -7,8 +7,16 @@ import java.util.Queue;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * 外部排序的核心类
+ */
 public class ExternalSort {
+
     private Generator g;
+
+    /**
+     * 结果存放的文件名
+     */
     private String resultPath;
 
     public ExternalSort(Generator g, String resultPath) {
@@ -16,6 +24,10 @@ public class ExternalSort {
         this.resultPath = resultPath;
     }
 
+    /**
+     * 开始进行外部排序
+     * @throws Exception
+     */
     public void start() throws Exception {
         g.generate();
         for (int i = 0; i < g.getCount(); i++) {
@@ -26,10 +38,16 @@ public class ExternalSort {
         BlockingQueue<Integer> queue = new LinkedBlockingDeque<>();
         AtomicInteger at = new AtomicInteger(0);
         solveInitFile(queue, at);
-//        solveQueueFile(queue, at);
+        solveQueueFile(queue, at);
     }
 
-
+    /**
+     * 解析初始化文件
+     *
+     * @param queue
+     * @param at
+     * @throws Exception
+     */
     private void solveInitFile(BlockingQueue<Integer> queue, AtomicInteger at) throws Exception {
         ExecutorService pool = Executors.newFixedThreadPool(10);
         List<Callable<Integer>> calls = new ArrayList<>();
@@ -53,24 +71,34 @@ public class ExternalSort {
         pool.shutdown();
     }
 
+    /**
+     * 循环解析队列里面的文件
+     *
+     * @param queue
+     * @param at
+     * @throws Exception
+     */
     private void solveQueueFile(BlockingQueue<Integer> queue, AtomicInteger at) throws Exception {
         ExecutorService pool = Executors.newFixedThreadPool(10);
         while (true) {
             List<Callable<Integer>> calls = new ArrayList<>();
             synchronized (queue) {
                 if (queue.size() == 1) {
-                    String fname = getFileName(queue.take());
-                    File forigin = new File(fname);
-                    forigin.renameTo(new File(forigin.getParent() + "/" + resultPath));
+                    String name = getFileName(queue.take());
+                    File f = new File(name);
+                    File fRename = new File(f.getParent() + "/" + resultPath);
+                    if (fRename.exists()) {
+                        fRename.delete();
+                    }
+                    f.renameTo(fRename);
+                    break;
                 } else {
                     int index = 0;
                     while (index < queue.size()) {
                         if (queue.size() - index >= 2) {
-                            int finalIndex = index;
                             int num = at.incrementAndGet();
                             calls.add(() -> externalSort2(getFileName(queue.take()), getFileName(queue.take()), num));
                         } else {
-                            int finalIndex = index;
                             int num = at.incrementAndGet();
                             calls.add(() -> externalSort1(getFileName(queue.take()), num));
                         }
@@ -82,8 +110,17 @@ public class ExternalSort {
                 queue.put(n.get());
             }
         }
+        pool.shutdown();
     }
 
+    /**
+     * 对两个文件进行外部排序
+     * @param f1
+     * @param f2
+     * @param target
+     * @return
+     * @throws FileNotFoundException
+     */
     private int externalSort2(String f1, String f2, int target) throws FileNotFoundException {
         FormatScanner scan1 = g.getScanner(f1);
         FormatScanner scan2 = g.getScanner(f2);
@@ -105,6 +142,13 @@ public class ExternalSort {
         return target;
     }
 
+    /**
+     * 对一个文件进行外部排序
+     * @param f1
+     * @param target
+     * @return
+     * @throws FileNotFoundException
+     */
     private int externalSort1(String f1, int target) throws FileNotFoundException {
         FormatScanner scan1 = g.getScanner(f1);
         FormatPrintWriter p = new FormatPrintWriter(new PrintWriter(new File(getFileName(target))), g.getPer());
